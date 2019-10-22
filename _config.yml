@@ -23,7 +23,7 @@ sidebar-avatar: /img/head.jpg      # 头像
 # facebook_username: rainbom.z
 github_username: wenhuaGit
 # zhihu_username: RainbomSea
-# csdn_username: qq_39268193
+csdn_username: wenhua_csdn
 
 
 
@@ -91,7 +91,11 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "GitHub·wenhuaGit",
+        title: "我的Github",
         href: "http://wenhuaGit.github.io"
+    },
+    {
+        title: "我的CSDN",
+        href: "https://blog.csdn.net/wenhua_csdn"
     }
 ]

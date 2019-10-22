@@ -1,10 +1,10 @@
 # Site settings | 网站设置
 title: WenHua.Pang
 SEOTitle: WenHua.Pang的博客 | RaimbomSea
-header-img: img/home-bg-he.png
+header-img: img/home-bg-he.jpg
 email: 836566901@qq.com
 description: "WenHua.Pang的博客"
-keyword: "WenHua.Pang, WenHua.Pang的博客, rainbom sea, WenHua.Pang, Python blog"
+keyword: "WenHua.Pang, WenHua.Pang的博客, WenHua.Pang, Python blog"
 url: "http://wenhuaGit.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: "https://github.com/wenhuaGit/wenhuaGit.github.io.git" #code repository | 代码仓库
@@ -59,14 +59,14 @@ kramdown:
   input: GFM                            # use Github Flavored Markdown !important
 
 # Gitalk
-# gitalk:
-#   enable: true    # 是否开启Gitalk评论
-#   clientID: 99ecf1fdc9b7e357ebb7                            #生成的clientID
-#   clientSecret: a866f00709e418ffd35d9986e130ff7f01a3cba2    #生成的clientSecret
-#   repo: RainbomSea.github.io    #仓库名称
-#   owner: RainbomSea    # github用户名
-#   admin: RainbomSea
-#   distractionFreeMode: true # 是否启用类似FB的阴影遮罩
+gitalk:
+  enable: false    # 是否开启Gitalk评论
+  clientID: 99ecf1fdc9b7e357ebb7                            #生成的clientID
+  clientSecret: a866f00709e418ffd35d9986e130ff7f01a3cba2    #生成的clientSecret
+  repo: RainbomSea.github.io    #仓库名称
+  owner: RainbomSea    # github用户名
+  admin: RainbomSea
+  distractionFreeMode: true # 是否启用类似FB的阴影遮罩
 
 
 # 统计

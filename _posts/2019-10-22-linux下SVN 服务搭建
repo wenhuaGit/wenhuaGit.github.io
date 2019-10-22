@@ -1,0 +1,152 @@
+---
+layout:     post
+title:      linux下SVN 服务搭建
+subtitle:   linux下SVN 服务搭建详细步骤
+date:       2019-10-22
+author:     wenhua.pang
+header-img: img/home-bg-o.jpg
+catalog: true
+tags:
+    - Linux
+    - SVN
+---
+
+## linux下SVN 服务搭建
+
+###安装和配置步骤
+**1.环境要求：**
+
+:   cenos 6 / 7
+
+**2.安装svn**
+
+> yum -y install subversion
+**3.配置**
+: 建立版本库目录
+> mkdir /data/svn
+> svnserve -d -r /data/svn
+
+**4.建立版本库**
+: 创建一个新的Subversion项目
+> svnadmin create /data/svn/test
+
+**5.用户密码passwd配置**
+
+> [root@localhost password]#   cd /data/svn/test/conf
+> [root@admin conf]#    vim passwd
+
+修改passwd为以下内容：
+```
+[users]
+# harry = harryssecret
+# sally = sallyssecret
+hello=123
+用户名=密码
+
+# 这样我们就建立了hello用户， 123密码
+# 以上语句都必须顶格写, 左侧不能留空格, 否则会出错.
+```
+
+**6.权限控制authz配置**
+
+>[root@admin conf]# vi  authz
+
+> # 目的是设置哪些用户可以访问哪些目录，向authz文件追加以下内容
+
+: 设置[/]代表根目录下所有的资源   或者写成[repl:/]
+```
+[/]
+hello = rw
+
+意思是hello用户对repo测试库下所有的目录有读写权限，当然也可以限定。
+如果是自己用，就直接是读写吧。
+以上语句都必须顶格写, 左侧不能留空格, 否则会出错.
+```
+**7.服务svnserve.conf配置**
+```
+[root@admin conf]# vim svnserve.conf
+
+追加以下内容：
+[general]
+
+#匿名访问的权限，可以是read,write,none,默认为read
+anon-access=none
+
+#使授权用户有写权限 
+auth-access=write
+
+#密码数据库的路径 
+password-db=passwd
+
+#访问控制文件 
+authz-db=authz
+
+#认证命名空间，subversion会在认证提示里显示，并且作为凭证缓存的关键字 
+realm=/data/svn/repositories
+
+*以上语句都必须顶格写, 左侧不能留空格, 否则会出错.*
+```
+**8.启动svn服务**
+
+查看svn的服务是否启动
+>ps -ef|grep svn
+
+如果没有启动执行 下面命令即可：
+>svnserve -d -r /data/svn  --listen-port=3690
+
+**9.客户端连接**
+>svn co svn://ip/test
+>用户名:hello
+>密码：123
+
+----------------
+
+**10.实现SVN与WEB同步,可以CO一个出来,也可以直接配在仓库中**
+
+1) 设置WEB服务器根目录为
+> /usr/local/apache2/htdocs/
+
+2) checkout一份SVN
+> svn co svn://ip/test /usr/local/apache2/htdocs/test
+
+修改权限为WEB用户
+
+> chown -R apache:apache /usr/local/apache2/htdocs/test
+
+**3)建立同步脚本**
+
+> cd /data/svn/test/hooks/
+> cp post-commit.tmpl post-commit
+
+**编辑post-commit,在文件最后添加以下内容**
+```
+REPOS="$1"
+REV="$2"
+
+BASEPATH=/usr/local/apache2/htdocs/test
+WEBPATH="$BASEPATH/"
+LOG_PATH=/tmp/svn_hook.log
+echo "------------Start Commit -----------" >> $LOG_PATH
+echo "Time:"`date '+%Y-%m-%d %T'`>>$LOG_PATH
+
+export LANG=zh_CN.UTF-8
+
+svn update $WEBPATH --username hello--password 123 --no-auth-cache
+ 
+增加脚本执行权限
+    chmod +x post-commit
+
+最后操作是关闭服务然再打开服务:
+
+svn服务的关闭：
+kill all svnserve
+
+svn开启：
+svnserve -d -r /data/svn/ 
+```
+
+>SVN自动同步程序执行流程：
+1、用户提交文件到SVN服务器，提交操作成功后触发post-commit脚本
+2、在post-commit版本文件中使用php_script.php执行PHP脚本
+3、在PHP脚本中通过exec系统调用更新服务器上的版本库工作副本
+4、根据更新操作结果日志，对另一个SVN版本库进行对应的操作处理
